@@ -3,6 +3,7 @@ import { StyleSheet, Pressable } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { useAppState } from '@/state/AppState';
+import DonutTimer from '@/components/DonutTimer';
 
 function formatHMS(totalSeconds: number) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -36,15 +37,24 @@ export default function HomeScreen() {
     return () => timer && clearInterval(timer);
   }, [active?.startISO]);
 
+  const totalSecs = (selectedMethod?.fastingHours ?? 16) * 3600;
+  const clampedElapsed = active ? Math.min(elapsed, totalSecs) : 0;
+  const remaining = Math.max(0, totalSecs - clampedElapsed);
+  const progress = active ? clampedElapsed / totalSecs : 0;
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Fasting Tracker</Text>
       <Text style={styles.subheading}>{selectedMethod?.name} Method</Text>
 
-      <View style={styles.timerWrapper}>
-        <Text style={styles.timerText}>{formatHMS(elapsed)}</Text>
-        <Text style={styles.timerLabel}>{active ? 'Elapsed' : 'Ready'}</Text>
-      </View>
+      <DonutTimer
+        size={200}
+        strokeWidth={14}
+        progress={progress}
+        durationLabel={`${selectedMethod?.name} Fast`}
+        centerText={active ? formatHMS(clampedElapsed) : 'Ready'}
+        subText={active ? `${formatHMS(remaining)} remaining` : 'Tap Start to begin'}
+      />
 
       {active ? (
         <Pressable style={[styles.button, styles.endBtn]} onPress={() => endFast()}>

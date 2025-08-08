@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { ThemeStateProvider } from '@/state/ThemeState';
 import { AppStateProvider } from '@/state/AppState';
 
 export {
@@ -43,7 +44,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ThemeStateProvider>
+      <RootLayoutNav />
+    </ThemeStateProvider>
+  );
 }
 
 function RootLayoutNav() {
